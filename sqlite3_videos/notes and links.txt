@@ -1,0 +1,504 @@
+
+use to run FastAPI: python -m uvicorn main:app --reload
+local host: http://127.0.0.1:8000/docs
+inside PS C:\Users\Aekky\OneDrive - Mahidol University\Desktop\VS Code work\imaginecup-2023\sqlite3_videos> terminal
+
+npm start in PS C:\Users\Aekky\OneDrive - Mahidol University\Desktop\VS Code work\imaginecup-2023\React Template> terminal
+
+
+
+Current Problem:
+1. The timeline doesn't link with the video
+    >> the timeline may not be used with the com sci anyway so this problem can possibly be overlooked
+- When we click the topic name, the video sometimes minimizes and goes to play at the start.
+- Also, it produces this error:
+
+index.js:1 
+        
+       Warning: Failed prop type: Invalid prop `src` of type `array` supplied to `Player`, expected `string`.
+    at Player (http://localhost:3000/material-kit-react/static/js/main.chunk.js:44313:58)
+    at VideoMk2 (http://localhost:3000/material-kit-react/static/js/main.chunk.js:44652:61)
+    at div
+    at div
+    at http://localhost:3000/material-kit-react/static/js/vendors~main.chunk.js:2006:73
+    at Grid (http://localhost:3000/material-kit-react/static/js/vendors~main.chunk.js:11133:91)
+    at div
+    at http://localhost:3000/material-kit-react/static/js/vendors~main.chunk.js:2006:73
+    at Grid (http://localhost:3000/material-kit-react/static/js/vendors~main.chunk.js:11133:91)
+    at Upload
+    at Routes (http://localhost:3000/material-kit-react/static/js/vendors~main.chunk.js:170465:5)
+    at InnerThemeProvider (http://localhost:3000/material-kit-react/static/js/vendors~main.chunk.js:34275:74)
+    at ThemeProvider (http://localhost:3000/material-kit-react/static/js/vendors~main.chunk.js:41924:5)
+    at ThemeProvider (http://localhost:3000/material-kit-react/static/js/vendors~main.chunk.js:34295:5)
+    at App (http://localhost:3000/material-kit-react/static/js/main.chunk.js:109:75)
+    at Router (http://localhost:3000/material-kit-react/static/js/vendors~main.chunk.js:170398:15)
+    at BrowserRouter (http://localhost:3000/material-kit-react/static/js/vendors~main.chunk.js:169913:5)
+
+2. Sometimes but not always, when skipping ahead to certain points of the video, the stream cannot load the video content in time.
+It produces this error: https://github.com/videojs/video.js/issues/4793
+But it's not always the case. It only happens if you rapidly skip.
+----------------------------------------------------------------------------------------------------------------------------------
+IMPORTANT LINKS
+>>>>>FOR database.py and overall database linking with SQLite> https://fastapi.tiangolo.com/tutorial/sql-databases/
+>>>>>Form: https://stackoverflow.com/questions/60127234/how-to-use-a-pydantic-model-with-form-data-in-fastapi    
+----------------------------------------------------------------------------------------------------------------------------------
+
+
+-UNUSED- >> concerns database input using BLOB
+How to upload multimedia files to SQLite >> for video.py
+https://www.twilio.com/blog/intro-multimedia-file-upload-python-sqlite3-database
+video.db is changed to videoDatabase
+
+connection = sqlite3.connect('videoDatabase.db')
+
+
+with open('schema.sql') as f:
+    connection.executescript(f.read())
+
+cur = connection.cursor()
+
+cur.execute("INSERT INTO video (video_name, file_blob) VALUES (?, ?)",
+            ('First Post', 'file_blob for the first post')
+            )
+
+cur.execute("INSERT INTO video (video_name, file_blob) VALUES (?, ?)",
+            ('Second Post', 'file_blob for the second post')
+            )
+
+connection.commit()
+connection.close()
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+TO BE USED LATER
+https://fastapi.tiangolo.com/tutorial/handling-errors/
+
+
+id INTEGER PRIMARY KEY AUTOINCREMENT, in schema >> change
+id >> uuid (String) how to do this. Check it out later
+https://vespa-mrs.github.io/vespa.io/development/project_dev/database/DatabaseUuidEfficiency.html
+https://docs.python.org/3/library/uuid.html << about UUID
+
+
+Maybe useful later
+https://fastapi.tiangolo.com/tutorial/request-files/
+https://stackoverflow.com/questions/19176024/how-to-escape-special-characters-in-building-a-json-string
+
+
+UploadFile
+has the following async methods. They all call the corresponding file methods underneath (using the internal SpooledTemporaryFile).
+
+write(data): Writes data (str or bytes) to the file.
+read(size): Reads size (int) bytes/characters of the file.
+>seek(offset): Goes to the byte position offset (int) in the file.>> this can be useful!!!!!!!!!!!!!!!!!!
+    E.g., await myfile.seek(0) would go to the start of the file.
+    This is especially useful if you run await myfile.read() once and then need to read the contents again.
+close(): Closes the file.
+
+
+https://stackoverflow.com/questions/63580229/how-to-save-uploadfile-in-fastapi << maybe useful later
+
+# Unused Example Code
+# @app.post("/users/{user_id}/items/", response_model=schemas.Item)
+# def create_item_for_user(
+#     user_id: int, item: schemas.ItemCreate, db: Session = Depends(get_db)
+# ):
+#     return crud.create_user_item(db=db, item=item, user_id=user_id)
+
+
+# @app.get("/items/", response_model=list[schemas.Item])
+# def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+#     items = crud.get_items(db, skip=skip, limit=limit)
+#     return items
+
+
+# from fastapi import FastAPI
+
+# app = FastAPI()
+
+    
+# @app.get("/video/{video_name}")
+# async def read_item(video_name: str):
+#     return {"video:": video_name}
+
+# 
+# 
+React Templates
+https://www.creative-tim.com/product/now-ui-kit-react
+
+Adapting our code to Templates
+(use about us page as template for upload file page)
+
+
+
+
+Steps of implementing our code with template
+Currently our web should have 4 pages: home, product (search), uploader page, and video player
+1. Uploader page
+    - put Drag_Uploader into about us page + adapted the template's form into our form
+2. Search Page (Author page)
+3. Search Result Page (Copy of Author page)
+
+
+Maybe this will be useful
+https://stackoverflow.com/questions/41938718/how-to-download-files-using-axios
+https://www.codegrepper.com/code-examples/javascript/How+to+download+files+using+axios
+https://stackoverflow.com/questions/50694881/how-to-download-file-in-react-js
+
+
+https://sqlmodel.tiangolo.com/tutorial/fastapi/update/ << updating with database
+
+
+- add transactional table that keeps OCR and speech recognition results
+
+
+UNUSED STUFF FROM MAIN.PY
+
+--- Getting stuff using crud instead of query (more difficult) ---
+@app.get("/getvideos_videoname/{videoname}")
+def read_videos_videoname(VideoName: str, db: Session = Depends(get_db)):
+    print("in getvideos/{videoname}")
+    videos = crud.get_videos_by_VideoName(db, VideoName=VideoName)
+    if videos is None:
+        raise HTTPException(status_code=404, detail="Video not found")
+    return videos
+
+@app.get("/getvideos_lecturename/{lecturename}")
+def read_videos_lecturename(LectureName : str, db: Session = Depends(get_db)):
+    print("in getvideos/{lecturename}")
+    videos = crud.get_videos_by_LectureName(db, LectureName=LectureName)
+    if videos is None:
+        raise HTTPException(status_code=404, detail="Video not found")
+    return videos
+
+@app.get("/getvideos_lecturerID/{lecturerID}")
+def read_videos_lecturerID(LecturerID: int, db: Session = Depends(get_db)):
+    print("in getvideos/{lecturerID}")
+    videos = crud.get_videos_by_LecturerID(db, LecturerID=LecturerID)
+    if videos is None:
+        raise HTTPException(status_code=404, detail="Video not found")
+    return videos
+
+@app.get("/getvideos_studentID/{studentID}")
+def read_videos_studentID(StudentID: int, db: Session = Depends(get_db)):
+    print("in getvideos/{studentID}")
+    videos = crud.get_videos_by_StudentID(db, StudentID=StudentID)
+    if videos is None:
+        raise HTTPException(status_code=404, detail="Video not found")
+    return videos
+
+--- unused video streaming functions ---
+
+
+@app.get("/teststream") # http://127.0.0.1:8000/teststream
+async def test_stream():
+    return FileResponse('uploadedVideos/1ce89b45-1ab6-478c-b85f-91233176514e.mp4', media_type="video/mp4")
+
+@app.get("/stream")
+async def stream_video(uuid: str):
+    vuuid = f'"{uuid}"'
+    print(vuuid)
+    query = "SELECT VideoPath FROM video WHERE uuid={}".format(str(vuuid))
+    path = str(await database.fetch_one(query=query))
+    path = path[2:-3]
+    print(path)
+    return FileResponse(path, media_type="video/mp4")
+
+
+@app.get("/stream2")
+async def main(uuid: str):
+    vuuid = f'"{uuid}"'
+    print(vuuid)
+    query = "SELECT VideoPath FROM video WHERE uuid={}".format(str(vuuid))
+    path = str(await database.fetch_one(query=query))
+    path = path[2:-3]
+    print(path)
+    def iterfile():  # 
+        with open(path, mode="rb") as file_like:  # 
+            yield from file_like  # 
+
+    return StreamingResponse(iterfile(), media_type="video/mp4")
+
+
+@app.post("/test")
+async def fetch_data(id: int):
+    query = "SELECT LectureName FROM video WHERE ID={}".format(str(id))
+    results = await database.fetch_all(query=query)
+    return  results
+
+from pathlib import Path
+from fastapi import FastAPI
+from fastapi import Request, Response
+from fastapi import Header
+from fastapi.templating import Jinja2Templates
+
+app = FastAPI()
+templates = Jinja2Templates(directory="templates")
+CHUNK_SIZE = 1024*1024
+video_path = Path("uploadedVideos/74f7e89d-0caf-4b0d-b32d-591d4c3bcf74.mp4")
+
+@app.get("/video")
+async def video_endpoint():
+    # print(range)
+    # print(type(range))
+    # start, end = str(range).replace("bytes=", "").split("-")
+    # start = int(start)
+    # print(start)
+    # end = int(end) if end else start + CHUNK_SIZE
+    # print(end)
+    start = 1024000
+    end = 2048000
+    with open(video_path, "rb") as video:
+        video.seek(start)
+        data = video.read(end - start)
+        filesize = str(video_path.stat().st_size)
+        headers = {
+            'Content-Range': f'bytes {str(start)}-{str(end)}/{filesize}',
+            'Accept-Ranges': 'bytes'
+        }
+        return Response(data, status_code=206, headers=headers, media_type="video/mp4")
+
+--- unused video getting functions ---
+@app.get("/get/viewed_videos")
+async def get_viewed_videos(firstname: str):
+    query = "SELECT * FROM video LEFT JOIN student ON (video.StudentID = student.StudentID) WHERE student.Firstname = :Firstname"
+    rows = await database.fetch_all(query=query, values={"Firstname": firstname})
+    return rows
+
+@app.get("/get/video_permission/students")
+async def students_in_group(GroupNumber: int):
+    query = "SELECT * FROM student INNER JOIN student_group ON (student.StudentID = student_group.StudentID) WHERE student_group.GroupNumber = :GroupNumber"
+    rows = await database.fetch_all(query=query, values={"GroupNumber": GroupNumber})
+    return rows   
+
+--- unused uploading functions ----
+@app.post("/video/post", response_model=schemas.Video)
+def create_video(video: schemas.VideoCreate, db: Session = Depends(get_db)):
+    print("in create_video")
+    print("uuid: ", video.uuid)
+    db_vdo = crud.get_video(db, uuid=video.uuid)
+    if db_vdo:
+        raise HTTPException(status_code=400, detail="Video already exists in database!")
+    print("crud.create_video")
+    return crud.create_video(db=db, video=video)
+
+
+original function
+@app.post("/uploadfile")
+async def create_upload_file(file: UploadFile):
+    print(file.filename)
+    return {"filename": file.filename}
+
+
+@app.post("/uploadfile2")
+async def create_upload_file(file: UploadFile, video: schemas.VideoBase, db: Session = Depends(get_db)): #schemas.VideoCreate
+    print("in create_upload_file")
+    print("uuid: ", video.uuid)
+    #uncomment when doing the get_video function
+    # db_vdo = crud.get_video(db, uuid=video.uuid)
+    # if db_vdo:
+    #     raise HTTPException(status_code=400, detail="Video already exists in database!")
+    print("crud.create_video")
+    print("filename:", file.filename)
+    return crud.create_video(db=db, video=video, file=file)
+    #return {"filename": file.filename}
+
+
+@app.post("/files/")
+async def create_file( file: UploadFile, video: schemas.VideoBase = Depends(VideoBase.send_form)):
+    return {
+        "file_name": file.filename,
+        "video": video
+    }
+
+
+designBlocksData.js THAT DOESN'T WORK
+/*
+=========================================================
+* Material Kit 2 React - v2.0.0
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/material-kit-react
+* Copyright 2021 Creative Tim (https://www.creative-tim.com)
+
+Coded by www.creative-tim.com
+
+ =========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+*/
+import axios from "axios";
+
+const imagesPrefix = "https://cdn.discordapp.com/attachments/917582730982723625";
+// https://cdn.discordapp.com/attachments/917582730982723625/983667848545202206/FB_IMG_1558676210120.jpgconst
+
+// const ExportData = [
+//   {
+//     // title: "Example Course",
+//     // description: "Just for test all video in fastapi",
+//     items: [
+//       // {
+//       // image: `${imagesPrefix}/983667449650114611/IMG_20181130_234218.jpg`,
+//       // name: "LockVideoExample",
+//       // count: 691140,
+//       // pro: true,
+//       // },
+//     ],
+//   },
+//   // {
+//   //   title: "Navigation",
+//   //   description: "30+ components that will help go through the pages",
+//   //   items: [
+//   //     {
+//   //       image: `${imagesPrefix}/983667848545202206/FB_IMG_1558676210120.jpg`,
+//   //       name: "Navbars",
+//   //       count: 4,
+//   //       route: "/sections/navigation/navbars",
+//   //     },
+//   //     {
+//   //       image: `${imagesPrefix}/983667848545202206/FB_IMG_1558676210120.jpg`,
+//   //       name: "Nav Tabs",
+//   //       count: 2,
+//   //       route: "/sections/navigation/nav-tabs",
+//   //     },
+//   //     {
+//   //       image: `${imagesPrefix}/983667848545202206/FB_IMG_1558676210120.jpg`,
+//   //       name: "Pagination",
+//   //       count: 3,
+//   //       route: "/sections/navigation/pagination",
+//   //     },
+//   //   ],
+//   // },
+// ];
+
+function RefreshData() {
+  let i = 0;
+  axios
+    .get("http://localhost:8000/getallvideos")
+    .then((response) => {
+      console.log("debug");
+      console.log(response);
+      // console.log(ExportData);  not needed anymore (and is still commented above)
+      // console.log(ExportData[0].items);
+      console.log(response.data[0].LectureName);
+      for (i = 0; i < response.data.length; i += 1) {
+        response.push({
+          image: `${imagesPrefix}/983667449650114611/IMG_20181130_234218.jpg`,
+          name: response.data[i].LectureName,
+          count: response.data[i].uuid,
+          route: `VideoPlayer/${response.data[i].uuid}`,
+        });
+      }
+      // ExportData[0].items.push({
+      //   image: `${imagesPrefix}/983667449650114611/IMG_20181130_234218.jpg`,
+      //   name: response.data[0].LectureName,
+      //   count: 10,
+      //   route: `/pages/landing-pages/UploadPage/${response.data[0].uuid}`,
+      // });
+      console.log("==============");
+      // console.log(ExportData);
+    })
+    .catch((error) => console.log(error));
+}
+
+// RefreshData();
+
+// export default ExportData;
+export default RefreshData;
+
+/*
+=========================================================
+* Material Kit 2 React - v2.0.0
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/material-kit-react
+* Copyright 2021 Creative Tim (https://www.creative-tim.com)
+
+Coded by www.creative-tim.com
+
+ =========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+*/
+import axios from "axios";
+
+const imagesPrefix = "https://cdn.discordapp.com/attachments/917582730982723625";
+// https://cdn.discordapp.com/attachments/917582730982723625/983667848545202206/FB_IMG_1558676210120.jpgconst
+
+// const ExportData = [
+//   {
+//     // title: "Example Course",
+//     // description: "Just for test all video in fastapi",
+//     items: [
+//       // {
+//       // image: `${imagesPrefix}/983667449650114611/IMG_20181130_234218.jpg`,
+//       // name: "LockVideoExample",
+//       // count: 691140,
+//       // pro: true,
+//       // },
+//     ],
+//   },
+//   // {
+//   //   title: "Navigation",
+//   //   description: "30+ components that will help go through the pages",
+//   //   items: [
+//   //     {
+//   //       image: `${imagesPrefix}/983667848545202206/FB_IMG_1558676210120.jpg`,
+//   //       name: "Navbars",
+//   //       count: 4,
+//   //       route: "/sections/navigation/navbars",
+//   //     },
+//   //     {
+//   //       image: `${imagesPrefix}/983667848545202206/FB_IMG_1558676210120.jpg`,
+//   //       name: "Nav Tabs",
+//   //       count: 2,
+//   //       route: "/sections/navigation/nav-tabs",
+//   //     },
+//   //     {
+//   //       image: `${imagesPrefix}/983667848545202206/FB_IMG_1558676210120.jpg`,
+//   //       name: "Pagination",
+//   //       count: 3,
+//   //       route: "/sections/navigation/pagination",
+//   //     },
+//   //   ],
+//   // },
+// ];
+
+export default function RefreshData() {
+  let i = 0;
+  axios
+    .get("http://localhost:8000/getallvideos")
+    .then((response) => {
+      console.log(response);
+      // console.log(ExportData);
+      // console.log(ExportData[0].items);
+      console.log(response.data[0].LectureName);
+      for (i = 0; i < response.data.length; i += 1) {
+        response.data.push({
+          image: `${imagesPrefix}/983667449650114611/IMG_20181130_234218.jpg`,
+          name: response.data[i].LectureName,
+          count: response.data[i].uuid,
+          route: `VideoPlayer/${response.data[i].uuid}`,
+        });
+      }
+      // ExportData[0].items.push({
+      //   image: `${imagesPrefix}/983667449650114611/IMG_20181130_234218.jpg`,
+      //   name: response.data[0].LectureName,
+      //   count: 10,
+      //   route: `/pages/landing-pages/UploadPage/${response.data[0].uuid}`,
+      // });
+      console.log("==============");
+      // console.log(ExportData);
+    })
+    .catch((error) => console.log(error));
+}
+
+RefreshData();
+
+// export default ExportData;
+
+
+
+
+
