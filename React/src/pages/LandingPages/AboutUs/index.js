@@ -34,6 +34,9 @@ import Featuring from "pages/LandingPages/AboutUs/sections/Featuring";
 import Newsletter from "pages/LandingPages/AboutUs/sections/Newsletter";
 import DragUploader from "pages/LandingPages/AboutUs/sections/DragUploader";
 
+// new one
+import FileUpload from "pages/LandingPages/AboutUs/sections/FileUploader";
+
 // Routes
 import routes from "routes";
 import footerRoutes from "footer.routes";
@@ -128,6 +131,7 @@ function AboutUs() {
           boxShadow: ({ boxShadows: { xxl } }) => xxl,
         }}
       >
+        <FileUpload />
         <DragUploader />
         <Information />
         <Team />

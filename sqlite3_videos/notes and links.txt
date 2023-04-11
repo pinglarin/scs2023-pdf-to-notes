@@ -502,3 +502,128 @@ RefreshData();
 
 
 
+function App() {
+    const { register, handleSubmit } = useForm();
+
+    const onSubmit = async (data) => {
+        const formData = new FormData();
+        formData.append("file", data.file[0]);
+
+        const res = await fetch("http://localhost:5000/upload-file", {
+            method: "POST",
+            body: formData,
+        }).then((res) => res.json());
+        alert(JSON.stringify(`${res.message}, status: ${res.status}`));
+    };
+
+    return (
+        <div className="App">
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <input type="file" {...register("file")} />
+
+                <input type="submit" />
+            </form>
+        </div>
+    );
+}
+
+export default App;
+
+
+// code from ChatGPT
+import React, { useState } from "react";
+import axios from "axios";
+import fs from "fs";
+import path from "path";
+import os from "os";
+
+function FileUploader() {
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  const handleUpload = () => {
+    // Create a unique temporary directory name
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "pdf-uploads-"));
+
+    // Write the uploaded file to the temporary directory
+    const filePath = path.join(tempDir, selectedFile.name);
+    fs.writeFile(filePath, selectedFile, (err) => {
+      if (err) {
+        console.error("Error writing file to temporary directory", err);
+      } else {
+        console.log(
+          "File uploaded and stored in temporary directory",
+          tempDir
+        );
+        // Call a function to process the uploaded file and generate a summary
+        axios.post("http://localhost:8000/gen_summary/", { filePath })
+          .then((response) => {
+            console.log("Summary generated", response.data.summary);
+          })
+          .catch((error) => {
+            console.error("Error processing PDF", error);
+          });
+      }
+    });
+  };
+
+  return (
+    <div>
+      <input type="file" onChange={handleFileChange} />
+      <button onClick={handleUpload}>Upload</button>
+    </div>
+  );
+}
+
+export default FileUploader;
+
+// original FileUploader.js from webpage
+import React, { useState } from "react";
+
+function FileUpload() {
+  const [selectedFile, setSelectedFile] = useState();
+  const [isSelected, setIsSelected] = useState(false);
+  // const [isFilePicked, setIsFilePicked] = useState(false);
+
+  const handleChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+    setIsSelected(true);
+  };
+
+  const handleSubmit = (event) => {
+    if (isSelected === true) {
+      alert("File uploded");
+    } else {
+      alert("upload a file");
+    }
+    event.preventDefault();
+  };
+
+  return (
+    <form>
+      <h2>Upload a file</h2>
+      <input type="file" name="file" onChange={handleChange} />
+      {isSelected ? (
+        <div>
+          <h2>File Details</h2>
+          <p>Filename: {selectedFile.name}</p>
+          <p>Filetype: {selectedFile.type}</p>
+          <p>Size in bytes: {selectedFile.size}</p>
+          <p>lastModifiedDate:{selectedFile.lastModifiedDate.toLocaleDateString()}</p>
+        </div>
+      ) : (
+        <p>Select a file to show details</p>
+      )}
+      <div>
+        <button type="submit" onClick={handleSubmit}>
+          Submit
+        </button>
+      </div>
+    </form>
+  );
+}
+export default FileUpload;
+
