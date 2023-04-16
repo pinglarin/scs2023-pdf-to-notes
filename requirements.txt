@@ -1,0 +1,6 @@
+git+https://github.com/huggingface/accelerate
+evaluate
+nltk
+git+https://github.com/huggingface/transformers
+absl-py
+rouge_score
