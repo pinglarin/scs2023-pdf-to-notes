@@ -5,6 +5,15 @@
 In main.py (main FastAPI file)  [Create a temporary storage on Server aka FastAPI to store the file while being processed]
 4. Adjust FileUploader.js (temporarily TempUploader.js) to be like DragUploader.js.
 5. decorate Uploader Page
+6. Extract text from uploaded file, which is a SpooledTemporaryFile
+https://stackoverflow.com/questions/47171154/how-do-i-decode-text-from-a-pdf-online-with-requests used something sort of like this
+7. Convert output text into word file
+>> not sure if this can be done because the most possible way to return a file is using FileResponse
+but it requires a path to the file and probably cant send a file that has been generated in the function. 
+Will probably have to result to simply sending a string to the user.
 
 ***TO BE DONE***
 Fill in generator function
+
+Resources
+https://fastapi.tiangolo.com/tutorial/request-files/
