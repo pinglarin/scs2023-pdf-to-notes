@@ -1,13 +1,35 @@
-from sqlalchemy.orm import Session
-
-import models, schemas
-from fastapi import FastAPI, File, UploadFile
+from fastapi import UploadFile
+from fastapi.responses import FileResponse
+import PyPDF2
+import aspose.words as aw
+from docx import Document
+from io import BytesIO
 
 def generate_summary(file: UploadFile):
+    inputText = ""
     print("generating summary of ", file.filename)
-    return "TEMPORARY SUMMARY"
+    f = file.file
+    f.seek(0)
+    reader = PyPDF2.PdfReader(f)
+    for page in reader.pages:
+        inputText += page.extract_text()
+    # idea: maybe we can seperate each page so the output will be seperate into pages?
+    print("\nDone with generate_summary function in crud\n")
+    outputText  = "this is the output text"
+    print(outputText)
+    doc = Document()
+    print("doc = Document()")
+    doc.add_paragraph(outputText)
+    print("doc.add_paragraph(outputText)")
+    docx_bytes = BytesIO()
+    print("before doc.save")
+    doc.save(docx_bytes)
+    print("after doc.save")
+    headers = { "Content-Disposition": "inline; filename=Summary.txt" } # vs attachment
+    print("before return")
+    return FileResponse(docx_bytes.getvalue(), headers=headers)
 
-# used for reference
+
 # def get_video_by_ID(db: Session, uuid: str):
 #     print("in get_video_by_ID")
 #     print("uuid in get_video: ", uuid)

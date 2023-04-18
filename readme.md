@@ -6,3 +6,4 @@ Pipeline:
 - Combine data into dataset compatible format \*
 - train model to generate notes/summary \*
 - output notes as txt \* (or word document or pdf)
+
