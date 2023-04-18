@@ -14,8 +14,8 @@ Coded by www.creative-tim.com
 */
 
 // Material Kit 2 React pages
-import Editor from "./pages/LandingPages/Editor/";
+import SummaryGenerator from "pages/SummaryGenerator";
 
-export default function EditorPage() {
-  return <Editor />;
+export default function SummaryGeneratorPage() {
+  return <SummaryGenerator />;
 }

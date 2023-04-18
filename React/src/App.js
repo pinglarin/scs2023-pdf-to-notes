@@ -24,14 +24,10 @@ import CssBaseline from "@mui/material/CssBaseline";
 
 // Material Kit 2 React themes
 import theme from "assets/theme";
-import Presentation from "layouts/pages/presentation";
+import SummaryGenerator from "layouts/pages/summaryGenerator";
 
 // Material Kit 2 React routes
 import routes from "routes";
-
-// Dragon s routes
-import Editor from "./pages/LandingPages/Editor/index";
-import VideoPlayer from "./pages/LandingPages/UploadPage/index";
 
 export default function App() {
   const { pathname } = useLocation();
@@ -60,10 +56,8 @@ export default function App() {
       <CssBaseline />
       <Routes>
         {getRoutes(routes)}
-        <Route path="/presentation" element={<Presentation />} />
-        <Route path="/UpdateInfo/:id" element={<Editor />} />
-        <Route path="/VideoPlayer/:id" element={<VideoPlayer />} />
-        <Route path="*" element={<Navigate to="/presentation" />} />
+        <Route path="/summary" element={<SummaryGenerator />} />
+        <Route path="*" element={<Navigate to="/summary" />} />
       </Routes>
     </ThemeProvider>
   );
