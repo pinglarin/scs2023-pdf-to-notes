@@ -4,3 +4,4 @@ nltk
 git+https://github.com/huggingface/transformers
 absl-py
 rouge_score
+datasets

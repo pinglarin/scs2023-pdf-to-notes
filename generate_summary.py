@@ -56,6 +56,14 @@ def summarize_text(classifier, text: str, max_len: int) -> str:
         print("Sequence length too large for model, cutting text in half and calling again")
         return summarize_text(classifier, text=text[:(len(text) // 2)], max_len=max_len//2) + summarize_text(classifier, text=text[(len(text) // 2):], max_len=max_len//2)
 
+def summarize(text, max_len=1024):
+    try:
+        summary = classifier(text, max_length=max_len, min_length=10, do_sample=False)
+        return summary[0]["summary_text"]
+    except IndexError as ex:
+        print("Sequence length too large for model, cutting text in half and calling again")
+        return summarize_text(classifier, text=text[:(len(text) // 2)], max_len=max_len//2) + summarize_text(classifier, text=text[(len(text) // 2):], max_len=max_len//2)
+
 
 tokenizer = BartTokenizer.from_pretrained("sshleifer/distilbart-xsum-12-1")
 model = BartForConditionalGeneration.from_pretrained("sshleifer/distilbart-xsum-12-1")
