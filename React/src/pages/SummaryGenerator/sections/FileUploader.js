@@ -81,6 +81,7 @@ function FileUpload() {
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <MKTypography component="a" fontWeight="regular" color="dark">
+                    <p> </p>
                     <input type="file" id="file" name="file" onChange={handleChange} />
                     {isSelected ? (
                       <div>

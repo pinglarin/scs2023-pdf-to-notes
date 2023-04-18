@@ -36,6 +36,8 @@ def extract_text(file: UploadFile):
     for page in reader.pages:
         inputText += page.extract_text()
     return inputText
+
+
 # def get_video_by_ID(db: Session, uuid: str):
 #     print("in get_video_by_ID")
 #     print("uuid in get_video: ", uuid)
