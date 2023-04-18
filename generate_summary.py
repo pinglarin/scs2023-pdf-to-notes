@@ -9,6 +9,7 @@ from transformers import BartForConditionalGeneration, BartTokenizer, AutoTokeni
 num_epoch = 5
 # scientific_papers, wiki_asp
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+classifier = pipeline("summarization", model=model, tokenizer=tokenizer, max_length=2706)
 
 # def convert_to_features(example_batch):
 #     input_encodings = tokenizer.batch_encode_plus(example_batch['text'], pad_to_max_length=True, max_length=1024, truncation=True))
@@ -34,13 +35,18 @@ def create_dataloader(data):
     dataloader = DataLoader(data_dataset, collate_fn=DataCollatorForLanguageModeling(tokenizer))
     return dataloader, encoded_data
 
-def predict(classifier, x, y=None, showTxt=False):
+def predict(x, y=None, showTxt=False):
     if showTxt:
         print("input text: ", x)
     result = classifier(x)
     print("predicted summary: ", result)
     if y != None:
         print("actual abstract: ", y)
+
+def predict_text(text):
+    
+    result = classifier(text)
+    return result
 
 def summarize_text(classifier, text: str, max_len: int) -> str:
     try:
@@ -76,7 +82,7 @@ train_mixed = interleave_datasets([train1, train2])
 # print(last_item)
 # predict(classifier, next(iter(train_mixed))['article'], next(iter(train_mixed))['abstract'])
 print("predicted: \n", summarize_text(classifier, next(iter(train_mixed))['article'], max_len=2706))
-
+print("--------------------------------")
 print("actual abstract: ", next(iter(train_mixed))['abstract'])
 
 # for i in train_mixed:
