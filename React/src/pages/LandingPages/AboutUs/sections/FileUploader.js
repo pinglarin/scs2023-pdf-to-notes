@@ -16,6 +16,7 @@ import HorizontalTeamCard from "examples/Cards/TeamCards/HorizontalTeamCard";
 function FileUpload() {
   const [selectedFile, setSelectedFile] = useState();
   const [isSelected, setIsSelected] = useState(false);
+  const [output, setOutput] = useState([]);
   // const [isFilePicked, setIsFilePicked] = useState(false);
 
   const [ModalSuccess, closeSuccess] = useModal("root", {
@@ -31,6 +32,7 @@ function FileUpload() {
   const handleChange = (event) => {
     setSelectedFile(event.target.files[0]);
     setIsSelected(true);
+    setOutput(event.target.data);
   };
 
   const UploadFile = (event) => {
@@ -48,6 +50,8 @@ function FileUpload() {
         .then((response) => {
           // eslint-disable-next-line
           console.log(response);
+          console.log(response.data); // the produced summary
+          setOutput(response.data);
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -117,6 +121,27 @@ function FileUpload() {
                 >
                   Submit
                 </MKButton>
+              </Grid>
+
+              <Grid container alignItems="center" py={2}>
+                <Grid
+                  container
+                  item
+                  justifyContent="center"
+                  xs={10}
+                  lg={7}
+                  mx="auto"
+                  textAlign="center"
+                >
+                  <MKTypography variant="h4" mb={1}>
+                    Summary:
+                  </MKTypography>
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                  <MKTypography variant="body2" color="text">
+                    {output}
+                  </MKTypography>
+                </Grid>
               </Grid>
             </MKBox>
           </MKBox>
