@@ -81,9 +81,10 @@ train_mixed = interleave_datasets([train1, train2])
 # df = pd.DataFrame(next(iter(train_mixed)))
 # print(last_item)
 # predict(classifier, next(iter(train_mixed))['article'], next(iter(train_mixed))['abstract'])
-print("predicted: \n", summarize_text(classifier, next(iter(train_mixed))['article'], max_len=2706))
-print("--------------------------------")
-print("actual abstract: ", next(iter(train_mixed))['abstract'])
+
+# print("predicted: \n", summarize_text(classifier, next(iter(train_mixed))['article'], max_len=2706))
+# print("--------------------------------")
+# print("actual abstract: ", next(iter(train_mixed))['abstract'])
 
 # for i in train_mixed:
 
