@@ -11,6 +11,7 @@ https://stackoverflow.com/questions/47171154/how-do-i-decode-text-from-a-pdf-onl
 >> not sure if this can be done because the most possible way to return a file is using FileResponse
 but it requires a path to the file and probably cant send a file that has been generated in the function. 
 Will probably have to result to simply sending a string to the user.
+8. display the summarized text on the web page <<< To Be DONE
 
 ***TO BE DONE***
 Fill in generator function
