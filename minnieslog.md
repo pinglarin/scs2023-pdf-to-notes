@@ -14,8 +14,5 @@ Will probably have to result to simply sending a string to the user.
 8. display the summarized text on the web page
 9. decorate web page (YES): remove unnecessary things and organize and make it pretty!!
 
-***TO BE DONE***
-Fill in generator function
-
 Resources
 https://fastapi.tiangolo.com/tutorial/request-files/
