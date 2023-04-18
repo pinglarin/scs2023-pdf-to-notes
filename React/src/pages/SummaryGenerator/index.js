@@ -22,34 +22,15 @@ import Card from "@mui/material/Card";
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 
-// Material Kit 2 React examples
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-import DefaultFooter from "examples/Footers/DefaultFooter";
-
 // new one
-import FileUpload from "pages/LandingPages/AboutUs/sections/FileUploader";
-
-// Routes
-import routes from "routes";
-import footerRoutes from "footer.routes";
+import FileUpload from "pages/SummaryGenerator/sections/FileUploader";
 
 // Images
 import bgImage from "assets/images/bg-about-us.jpg";
 
-function AboutUs() {
+function SummaryGenerator() {
   return (
     <>
-      <DefaultNavbar
-        routes={routes}
-        action={{
-          type: "external",
-          route: "https://www.creative-tim.com/product/material-kit-react",
-          label: "free download",
-          color: "default",
-        }}
-        transparent
-        light
-      />
       <MKBox
         minHeight="75vh"
         width="100%"
@@ -104,11 +85,8 @@ function AboutUs() {
       >
         <FileUpload />
       </Card>
-      <MKBox pt={6} px={1} mt={6}>
-        <DefaultFooter content={footerRoutes} />
-      </MKBox>
     </>
   );
 }
 
-export default AboutUs;
+export default SummaryGenerator;
