@@ -4,12 +4,26 @@ import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from datasets import load_dataset, interleave_datasets
-from transformers import BartForConditionalGeneration, BartTokenizer, AutoTokenizer, AutoModelForSeq2SeqLM, pipeline, AutoModelForMaskedLM, DataCollatorForLanguageModeling, Trainer, Seq2SeqTrainer, TrainingArguments
+from transformers import DataCollatorForSeq2Seq, BartForConditionalGeneration, BartTokenizer, AutoTokenizer, AutoModelForSeq2SeqLM, pipeline, AutoModelForMaskedLM, DataCollatorForLanguageModeling, Trainer, Seq2SeqTrainer, TrainingArguments, Seq2SeqTrainingArguments
+import evaluate
 
-num_epoch = 5
+num_epoch = 2
+metric = evaluate.load("accuracy")
 # scientific_papers, wiki_asp
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+tokenizer = BartTokenizer.from_pretrained("sshleifer/distilbart-xsum-12-1")
+model = BartForConditionalGeneration.from_pretrained("sshleifer/distilbart-xsum-12-1")
+model.train().to(device)
+model.max_seq_length = 100000
+
 classifier = pipeline("summarization", model=model, tokenizer=tokenizer, max_length=2706)
+
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    predictions = np.argmax(logits, axis=-1)
+    return metric.compute(predictions=predictions, references=labels)
+
+data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
 
 # def convert_to_features(example_batch):
 #     input_encodings = tokenizer.batch_encode_plus(example_batch['text'], pad_to_max_length=True, max_length=1024, truncation=True))
@@ -65,29 +79,59 @@ def summarize(text, max_len=1024):
         return summarize_text(classifier, text=text[:(len(text) // 2)], max_len=max_len//2) + summarize_text(classifier, text=text[(len(text) // 2):], max_len=max_len//2)
 
 
-tokenizer = BartTokenizer.from_pretrained("sshleifer/distilbart-xsum-12-1")
-model = BartForConditionalGeneration.from_pretrained("sshleifer/distilbart-xsum-12-1")
-model.train().to(device)
-model.max_seq_length = 100000
-classifier = pipeline("summarization", model=model, tokenizer=tokenizer, max_length=2706)
+
 
 # DOWNLOAD DATASETS
 
-train1 = load_dataset("scientific_papers", name="pubmed", split="train", streaming=True)
-train2 = load_dataset("scientific_papers", name="arxiv", split="train", streaming=True)
-# test1 = load_dataset("scientific_papers", name="pubmed", split="test", streaming=True)
-# test2 = load_dataset("scientific_papers", name="arxiv", split="test", streaming=True)
-# val1 = load_dataset("scientific_papers", name="pubmed", split="validation", streaming=True)
-# val2 = load_dataset("scientific_papers", name="arxiv", split="validation", streaming=True)
+# train1 = load_dataset("scientific_papers", name="pubmed", split="train", cache_dir="./cache", )
+# train2 = load_dataset("scientific_papers", name="arxiv", split="train", cache_dir="./cache")
+# test1 = load_dataset("scientific_papers", name="pubmed", split="test", cache_dir="./cache")
+# test2 = load_dataset("scientific_papers", name="arxiv", split="test", cache_dir="./cache")
+# val1 = load_dataset("scientific_papers", name="pubmed", split="validation", cache_dir="./cache")
+# val2 = load_dataset("scientific_papers", name="arxiv", split="validation", cache_dir="./cache")
+
+train1 = load_dataset("scientific_papers", name="pubmed", split="train", streaming=True, cache_dir="./cache")
+train2 = load_dataset("scientific_papers", name="arxiv", split="train", streaming=True, cache_dir="./cache")
+# test1 = load_dataset("scientific_papers", name="pubmed", split="test", streaming=True, cache_dir="./cache")
+# test2 = load_dataset("scientific_papers", name="arxiv", split="test", streaming=True, cache_dir="./cache")
+val1 = load_dataset("scientific_papers", name="pubmed", split="validation", streaming=True, cache_dir="./cache")
+val2 = load_dataset("scientific_papers", name="arxiv", split="validation", streaming=True, cache_dir="./cache")
 
 train_mixed = interleave_datasets([train1, train2])
 # test_mixed = interleave_datasets([test1, test2])
-# val_mixed = interleave_datasets([val1, val2])
+val_mixed = interleave_datasets([val1, val2])
 
-# last_item = next(iter(train_mixed))
+train_mixed = train_mixed.with_format("torch")
+val_mixed = val_mixed.with_format("torch")
+
+def tokenize_function(examples):
+    
+    # print(examples)
+    return tokenizer(examples['article'], padding="max_length", truncation=True)
+
+# tokenized_train = train_mixed.map(tokenize_function, batched=True)
+# tokenized_val = val_mixed.map(tokenize_function, batched=True)
+
+small_train_dataset = train_mixed.shuffle(seed=42).take(100)# .select(range(1000))
+small_eval_dataset = val_mixed.shuffle(seed=42).take(20) # .select(range(1000))
+
+tokenized_train = small_train_dataset.map(tokenize_function, batched=True)
+tokenized_val = small_eval_dataset.map(tokenize_function, batched=True)
+
+
+# train_loader = DataLoader(small_train_dataset)
+# val_loader = DataLoader(small_eval_dataset)
+
+# print(type(tokenized_train))
+# last_item = next(iter(small_train_dataset))
+
+# print(last_item)
 
 # df = pd.DataFrame(next(iter(train_mixed)))
-# print(last_item)
+# print(len(small_train_dataset))
+# print(len(small_eval_dataset))
+# print(small_train_dataset.shape)
+# print(small_eval_dataset.shape)
 # predict(classifier, next(iter(train_mixed))['article'], next(iter(train_mixed))['abstract'])
 
 # print("predicted: \n", summarize_text(classifier, next(iter(train_mixed))['article'], max_len=2706))
@@ -105,23 +149,31 @@ train_mixed = interleave_datasets([train1, train2])
 # val_dataloader, encoded_val = create_dataloader(val_mixed)
 
 
-# training_args = TrainingArguments(
-#     output_dir="./results",
-#     learning_rate=2e-5,
-#     per_device_train_batch_size=32,
-#     weight_decay=0.01,
-#     max_steps=int(1e6),
-# )
+training_args = Seq2SeqTrainingArguments(
+    output_dir="./results",
+    learning_rate=2e-5,
+    per_device_train_batch_size=32,
+    weight_decay=0.01,
+    max_steps=int(1e6),
+    evaluation_strategy="epoch",
+    num_train_epochs=num_epoch,
+    # generation_config='./config'
+)
 
-# trainer = Seq2SeqTrainer(
-#     model=model,
-#     tokenizer=tokenizer,
-#     args=training_args,
-#     train_dataset=encoded_train,
-#     eval_dataset=encoded_val,
-# )
+trainer = Seq2SeqTrainer(
+    model=model,
+    tokenizer=tokenizer,
+    args=training_args,
+    # train_dataset=small_train_dataset,
+    # eval_dataset=small_eval_dataset,
+    # train_dataset=encoded_train,
+    # eval_dataset=encoded_val,
+    train_dataset=tokenized_train,
+    eval_dataset=tokenized_val,
+    data_collator=data_collator,
+)
 
-# trainer.train()
+trainer.train()
 
 # trainer.predict(encoded_test)
 
