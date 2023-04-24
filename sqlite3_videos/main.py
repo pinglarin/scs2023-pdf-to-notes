@@ -30,6 +30,4 @@ async def root():
 @app.post("/gen_summary")
 async def Generate_Summary(file: UploadFile = File(...)):
     summary = crud.summary_generator(file);
-    print(summary)
-    print("\nDone with /gen_summary function in main\n")
     return summary

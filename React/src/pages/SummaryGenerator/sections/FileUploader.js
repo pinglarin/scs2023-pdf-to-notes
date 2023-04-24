@@ -17,7 +17,6 @@ function FileUpload() {
   const [selectedFile, setSelectedFile] = useState();
   const [isSelected, setIsSelected] = useState(false);
   const [output, setOutput] = useState([]);
-  // const [isFilePicked, setIsFilePicked] = useState(false);
 
   const [ModalSuccess, closeSuccess] = useModal("root", {
     preventScroll: true,
@@ -39,7 +38,6 @@ function FileUpload() {
     const formData = new FormData();
     const uploadfile = document.querySelector("#file");
     formData.append("file", uploadfile.files[0]);
-    console.log(uploadfile.files[0]);
     if (uploadfile.files[0]) {
       axios
         .post(`http://localhost:8000/gen_summary/`, formData, {
@@ -50,7 +48,6 @@ function FileUpload() {
         .then((response) => {
           // eslint-disable-next-line
           console.log(response);
-          console.log(response.data); // the produced summary
           setOutput(response.data);
         })
         .catch((error) => {
@@ -62,9 +59,6 @@ function FileUpload() {
       // eslint-disable-next-line
       alert("upload a file");
     }
-    // for debugging
-    console.log("for debugging");
-    console.log(selectedFile.name);
     event.preventDefault();
   };
   return (

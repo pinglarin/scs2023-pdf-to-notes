@@ -8,14 +8,11 @@ import generate_summary
 
 def summary_generator(file: UploadFile):
     inputText = extract_text(file)
-    print(inputText)
     summary = generate_summary.summarize(inputText)
-    print("\nDone with generate_summary function in crud\n")
     return summary
 
 def extract_text(file: UploadFile):
     inputText = ""
-    print("generating summary of ", file.filename)
     f = file.file
     f.seek(0)
     reader = PyPDF2.PdfReader(f)
